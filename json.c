@@ -649,7 +649,7 @@ fdreadall(int f)
 }
 
 void
-main(int argc, char *argv[0])
+main(int argc, char *argv[])
 {
 	int i;
 	char *data;
@@ -662,7 +662,7 @@ main(int argc, char *argv[0])
 	if((j = parsejson(data)) == nil)
 		sysfatal("parsejson: %r");
 	for(i=1; i<argc; i++)
-		print("%s=%J%c", argv[i], jwalk(j, argv[i]), i==argc-1?'\n':' ');
+		print("%s=%J\n", argv[i], jwalk(j, argv[i]));
 
 	exits(0);
 }
