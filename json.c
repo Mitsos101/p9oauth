@@ -423,7 +423,7 @@ _printjval(Fmt *fmt, Json *v, int n)
 	}
 	switch(v->type){
 	case Jstring:
-		fmtprint(fmt, "\"%s\"", v->string);
+		fmtprint(fmt, "'%s'", v->string);
 		break;
 	case Jnumber:
 		if(floor(v->number) == v->number)
@@ -662,7 +662,7 @@ main(int argc, char *argv[0])
 	if((j = parsejson(data)) == nil)
 		sysfatal("parsejson: %r");
 	for(i=1; i<argc; i++)
-		print("%J\n", jwalk(j, argv[i]));
+		print("%s=%J%c", argv[i], jwalk(j, argv[i]), i==argc-1?'\n':' ');
 
 	exits(0);
 }
