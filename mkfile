@@ -1,5 +1,8 @@
-</$objtype/mkfile
-json: json.$O
-  $LD $LDFLAGS -o json json.$O
-json.$O:  json.c
-  $CC $CFLAGS json.c
+<$PLAN9/src/mkhdr
+
+TARG=json
+
+OFILES=\
+	json.$O\
+
+<$PLAN9/src/mkone
