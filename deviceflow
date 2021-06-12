@@ -1,0 +1,51 @@
+#!/usr/local/plan9/bin/rc
+ifs='
+' # just a newline
+argv0=$0
+fn usage {
+	echo usage: $argv0 clientid clientsecret issuer >[1=2]
+	exit usage
+}
+if(! ~ $#* 3)
+	usage
+clientid=$1
+clientsecret=$2
+issuer=$3
+scope=(email)
+granttype=urn:ietf:params:oauth:grant-type:device_code
+config=$issuer^/.well-known/openid-configuration
+curl $config | {
+	l=`{./json device_authorization_endpoint token_endpoint}
+	authendpoint=$l(1)
+	tokenendpoint=$l(2)
+}
+curl $authendpoint --data-urlencode client_id=$clientid --data-urlencode scope=^$"scope | {
+	l=`{./json device_code user_code expires_in interval verification_url}
+	devicecode=$l(1)
+	usercode=$l(2)
+	expiresin=$l(3)
+	interval=$l(4)
+	verificationurl=$l(5)
+}
+echo go to $verificationurl
+echo your code is $usercode
+while() {
+	curl $tokenendpoint --data-urlencode client_id=$clientid --data-urlencode client_secret=$clientsecret --data-urlencode device_code=$devicecode --data-urlencode grant_type=$granttype | {
+		l=`{./json error access_token expires_in refresh_token}
+		error=$l(1)
+		if (~ $error nil) {
+			accesstoken=$l(2)
+			tokenexpiresin=$l(3)
+			refreshtoken=$l(4)
+			echo your access token is $accesstoken
+			echo your access token will expire in $tokenexpiresin seconds
+			if(! ~ $refreshtoken nil) echo your refresh token is $refreshtoken
+			exit
+		}
+		if(! ~ $error authorization_pending) {
+			echo error: $error >[2=1]
+			exit
+		}
+	}
+	sleep $interval
+}
