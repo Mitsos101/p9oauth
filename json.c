@@ -423,7 +423,7 @@ _printjval(Fmt *fmt, Json *v, int n)
 	}
 	switch(v->type){
 	case Jstring:
-		fmtprint(fmt, "'%s'", v->string);
+		fmtprint(fmt, "%s", v->string);
 		break;
 	case Jnumber:
 		if(floor(v->number) == v->number)
