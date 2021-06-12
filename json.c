@@ -662,7 +662,7 @@ main(int argc, char *argv[])
 	if((j = parsejson(data)) == nil)
 		sysfatal("parsejson: %r");
 	for(i=1; i<argc; i++)
-		print("%J\n", argv[i], jwalk(j, argv[i]));
+		print("%J\n", jwalk(j, argv[i]));
 
 	exits(0);
 }
